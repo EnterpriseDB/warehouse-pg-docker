@@ -15,8 +15,18 @@ cd single-node
 
 ### 2. Export your EDB Repos 2.0 Token
 
+If you are using `zshrc`
+
 ```bash
-export export EDB_REPO_TOKEN=<YOUR TOKEN>
+echo 'export EDB_REPO_TOKEN=<YOUR TOKEN>' >> ~/.zshrc
+source ~/.zshrc
+```
+
+If you are using `bash`
+
+```bash
+echo 'export EDB_REPO_TOKEN=<YOUR TOKEN>' >> ~/.bashrc
+source ~/.bashrc
 ```
 
 ### 3. Enable Docker BuildKit
