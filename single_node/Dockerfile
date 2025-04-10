@@ -67,7 +67,7 @@ RUN     echo root:admin@123 | chpasswd && \
 RUN --mount=type=secret,id=EDB_REPO_TOKEN curl -1Lf https://downloads.enterprisedb.com/$(cat /run/secrets/EDB_REPO_TOKEN)/gpsupp/setup.rpm.sh | sudo bash
 
 # Installs the WarehousePG Binary
-RUN dnf -y install warehousepg-6
+RUN dnf -y install warehouse-pg-6
 
 COPY gpinitsystem_singlenode /tmp/
 COPY init_system.sh /tmp/
