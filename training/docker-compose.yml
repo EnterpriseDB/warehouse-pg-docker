@@ -1,0 +1,33 @@
+services:
+  master:
+    image: whpg-training
+    container_name: master
+    hostname: master
+    tty: true
+    platform: linux/amd64 
+    networks:
+      gpdb-network:
+    ports:
+      - "5555:5555"
+
+  segment1:
+    image: whpg-training
+    container_name: seg1
+    hostname: seg1
+    tty: true
+    platform: linux/amd64
+    networks:
+      gpdb-network:
+
+  segment2:
+    image: whpg-training
+    container_name: seg2
+    hostname: seg2
+    tty: true
+    platform: linux/amd64
+    networks:
+      gpdb-network:
+
+networks:
+  gpdb-network:
+    driver: bridge
