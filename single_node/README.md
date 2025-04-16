@@ -9,7 +9,7 @@ This Docker VM sets up WarehousePG on Rocky Linux 8. To install a different vers
 Clone this repository and navigate to the `single-node` directory:
 
 ```bash
-git clone https://github.com/hpedb/warehousepg-docker.git
+git clone https://github.com/warehouse-pg/whpg-docker.git
 cd single-node
 ```
 

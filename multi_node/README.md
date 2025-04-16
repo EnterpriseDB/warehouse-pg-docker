@@ -12,7 +12,7 @@ Make sure you have the following installed:
 Clone this repository and navigate to the `multi-node` directory:
 
 ```bash
-git clone https://github.com/hpedb/warehousepg-docker.git
+git clone https://github.com/warehouse-pg/whpg-docker.git
 cd multi-node
 ```
 
