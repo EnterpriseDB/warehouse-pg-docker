@@ -12,6 +12,17 @@ services:
     volumes:
       - ./datadirs/master:/data/master
 
+  standby-master:
+    image: warehousepg-multi-node
+    container_name: smdw
+    hostname: smdw
+    tty: true
+    platform: linux/amd64
+    networks:
+      gpdb-network:
+    volumes:
+      - ./datadirs/standby:/data/master
+
   segment1:
     image: warehousepg-multi-node
     container_name: sdw1

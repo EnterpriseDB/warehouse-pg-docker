@@ -59,12 +59,13 @@ export MASTER_DATA_DIRECTORY=/data/master/gpseg-1
 
     sshpass -p "changeme@123" ssh-copy-id -o StrictHostKeyChecking=no sdw1
     sshpass -p "changeme@123" ssh-copy-id -o StrictHostKeyChecking=no sdw2
+    sshpass -p "changeme@123" ssh-copy-id -o StrictHostKeyChecking=no smdw
     #sshpass -p "changeme@123" ssh-copy-id -o StrictHostKeyChecking=no smdw
     gpinitsystem -a \
                  -c /tmp/gpinitsystem_config \
                  -h /tmp/hostfile_gpinitsystem \
                  --max_connections=100
-    #gpinitstandby -s smdw -a
+
     printf "sdw1\nsdw2\n" >> /tmp/gpdb-hosts
 
 if [ $HOSTNAME == "mdw" ]; then

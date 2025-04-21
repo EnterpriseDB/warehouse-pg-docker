@@ -36,7 +36,7 @@ source ~/.bashrc
 Create the directories required for data persistence:  
 
 ```bash
-mkdir -p datadirs/master
+mkdir -p datadirs/master datadirs/standby
 mkdir -p datadirs/sdw1_primary1 datadirs/sdw1_primary2 datadirs/sdw1_mirror1 datadirs/sdw1_mirror2
 mkdir -p datadirs/sdw2_primary1 datadirs/sdw2_primary2 datadirs/sdw2_mirror1 datadirs/sdw2_mirror2
 ```
@@ -59,15 +59,20 @@ This may take few minutes.
 
 This will start the following containers:  
 - **mdw** → WarehousePG Master Node
+- **smdw** → WarehousePG Standby Master Node
 - **sdw1** → WarehousePG Segment Node 1
 - **sdw2** → WarehousePG Segment Node 2
 
-
 ## 7. Connect to Master Host
-
  
 ```bash
 docker exec -it mdw /bin/bash
+```
+
+Standby Mater Host `smdw` is configured but not initiated. To add the Standby Master Host, run the follwing command:
+
+```bash
+gpgpinitstandby -s smdw
 ```
 
 ## 8. Stopping and Restarting the Cluster  
