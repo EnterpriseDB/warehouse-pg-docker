@@ -116,14 +116,15 @@ multi-node/
 │── docker-compose.yml
 │── Dockerfile                  # Dockerfile for building the WarehousePG image
 │── datadirs/                   # Persistent storage for WarehousePG data
-│   ├── master/                 # Master node data
-│   ├── sdw1_primary1/          # Primary segment data (sdw1)
+│   ├── master/                 # Master data directory
+│   ├── standby/                # Standby Master data directory
+│   ├── sdw1_primary1/          # Primary segment data directories (sdw1)
 │   ├── sdw1_primary2/       
-│   ├── sdw1_mirror1/           # Mirror segment data (sdw1)
+│   ├── sdw1_mirror1/           # Mirror segment data directories (sdw1)
 │   ├── sdw1_mirror2/       
-│   ├── sdw2_primary1/          # Primary segment data (sdw2)
+│   ├── sdw2_primary1/          # Primary segment data directories (sdw2)
 │   ├── sdw2_primary2/       
-│   ├── sdw2_mirror1/           # Mirror segment data (sdw2)
+│   ├── sdw2_mirror1/           # Mirror segment data directories (sdw2)
 │   ├── sdw2_mirror2/       
 └── README.md
 ```
@@ -132,5 +133,5 @@ multi-node/
 
 - **Build** the Docker image before running the cluster.  
 - Data is persisted in the `datadirs/` folder.  
-- To reset the cluster, delete the `datadirs/` folder.  
+- To reset the cluster, delete `datadirs/`.
 
