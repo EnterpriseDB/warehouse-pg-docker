@@ -8,6 +8,7 @@ This repository provides Docker configurations for setting up WarehousePG in bot
 - [Single Node Setup](#single-node-setup)
 - [Multi Node Setup](#multi-node-setup)
 - [Interactive Training](#interactive-training)
+- [Build WarehousePG From Source](#build-warehousepg-from-src)
 
 ## Single Node Setup
 
@@ -20,3 +21,7 @@ For detailed instructions on setting up WarehousePG in a multi-node Docker envir
 ## Interactive Training
 
 For detailed instructions on setting up WarehousePG from scratch, please refer to the [README](https://github.com/warehouse-pg/whpg-docker/tree/main/training) inside the `training` folder.
+
+## Build WarehousePG From Source
+
+For instructions on building WarehousePG from source code, please refer to the [README](https://github.com/warehouse-pg/whpg-docker/tree/main/build-from-src) inside the `build-from-src` folder.
