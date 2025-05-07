@@ -73,6 +73,10 @@ COPY gpinitsystem_singlenode /tmp/
 COPY init_system.sh /tmp/
 
 
+
+#COPY ./os_pxf_rpm/pxf-gp6-6.10.1-SNAPSHOT.el8.x86_64.rpm /tmp/
+#RUN dnf -y install /tmp/pxf-gp6-6.10.1-SNAPSHOT.el8.x86_64.rpm
+
 RUN     echo "mdw" > /tmp/gpdb-hosts && \
         echo "/usr/local/lib" >> /etc/ld.so.conf && \
         echo "/usr/local/lib64" >> /etc/ld.so.conf && \
@@ -82,16 +86,75 @@ RUN     echo "mdw" > /tmp/gpdb-hosts && \
         hostname > ~/orig_hostname && \
         /usr/sbin/groupadd gpadmin && \
         /usr/sbin/useradd  gpadmin -g gpadmin -G wheel && \
+        /usr/sbin/groupadd hadoop && \
+        /usr/sbin/useradd  hadoop -g hadoop -G wheel && \
+        /usr/sbin/groupadd supergroup && \
+        /usr/sbin/usermod -aG supergroup gpadmin && \
         setcap cap_net_raw+ep /usr/bin/ping && \
         echo "changeme@123"|passwd --stdin gpadmin && \
+        echo "changeme@123"|passwd --stdin hadoop && \
         echo "gpadmin        ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers && \
+        echo "hadoop        ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers && \
         echo "root           ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers && \
         echo "export MASTER_DATA_DIRECTORY=/data/master/gpseg-1" >> /home/gpadmin/.bashrc && \
         echo "source /usr/local/greenplum-db/greenplum_path.sh"                >> /home/gpadmin/.bashrc && \
+        #chown -R gpadmin:gpadmin /usr/local/pxf-gp6 && \
+        #echo "export PXF_BASE=/home/gpadmin/pxf-base" >> /home/gpadmin/.bashrc && \
+        #echo "export PXF_HOME=/usr/local/pxf-gp6" >> /home/gpadmin/.bashrc && \
+        #echo "export PATH=$PATH:/usr/local/pxf-gp6/bin" >> /home/gpadmin/.bashrc && \
+        sudo chown -R gpadmin:gpadmin /usr/local/greenplum-db-6.27.1/ && \
         mkdir -p /data/master /data/primary /data/mirror && \
         chown -R gpadmin:gpadmin /data && \
         ssh-keygen -A && \
         echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
+
+
+RUN sudo dnf -y install java-1.8.0-openjdk-devel && \
+    echo "export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk/jre/" >> /home/gpadmin/.bashrc
+
+# ------------------------
+# Build and Install PXF
+# ------------------------
+
+# CLONE PXF REPO
+RUN git clone https://github.com/greenplum-db/pxf-archive.git /tmp/pxf && \
+    mkdir /usr/local/pxf-gp6 && \
+    chown -R gpadmin:gpadmin /tmp/pxf && \
+    chown -R gpadmin:gpadmin /usr/local/pxf-gp6
+
+# ------------------------
+# Install Hadoop 3.3.6
+# ------------------------
+
+COPY ./hadoop/config/core-site.xml /tmp
+
+ENV HADOOP_VERSION=3.3.6
+ENV HADOOP_HOME=/opt/hadoop
+ENV PATH=$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATH
+
+RUN echo "export HADOOP_HOME=/opt/hadoop" >> home/hadoop/.bashrc && \
+    echo "PATH=$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATH" >> home/hadoop/.bashrc
+
+RUN wget https://downloads.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz && \
+    tar -xzf hadoop-${HADOOP_VERSION}.tar.gz -C /opt && \
+    mv /opt/hadoop-${HADOOP_VERSION} $HADOOP_HOME && \
+    rm -f hadoop-${HADOOP_VERSION}.tar.gz && \
+    chown -R hadoop:hadoop /opt/hadoop/ && \
+    cp /tmp/core-site.xml /opt/hadoop/etc/hadoop && \
+    chown hadoop:hadoop /opt/hadoop/etc/hadoop/core-site.xml
+
+# Set JAVA_HOME in Hadoop env
+RUN echo "export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk" >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+
+USER hadoop
+
+RUN mkdir -p /home/hadoop/.ssh && \
+    chmod 700 /home/hadoop/.ssh && \
+    ssh-keygen -t rsa -b 4096 -C hadoop -f /home/hadoop/.ssh/id_rsa -P "" > /dev/null 2>&1 && \
+    cat /home/hadoop/.ssh/id_rsa.pub >> /home/hadoop/.ssh/authorized_keys && \
+    chmod 600 /home/hadoop/.ssh/authorized_keys
+
+RUN $HADOOP_HOME/bin/hdfs namenode -format -nonInteractive
 
 
 # ----------------------------------------------------------------------

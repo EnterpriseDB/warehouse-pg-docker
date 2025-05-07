@@ -55,7 +55,6 @@ source /usr/local/greenplum-db/greenplum_path.sh
 export MASTER_DATA_DIRECTORY=/data/master/gpseg-1
 
 # Initialize single node WarehousePG cluster
-
 gpinitsystem -a \
                  -c /tmp/gpinitsystem_singlenode \
                  -h /tmp/gpdb-hosts
@@ -88,6 +87,30 @@ EOF
      psql -P pager=off -d template1 -c "SELECT * FROM gp_segment_configuration ORDER BY dbid"
      psql -P pager=off -d template1 -c "SHOW optimizer"
 fi
+
+# PXF Build and Install START
+# TODO: Remove this once the package is available in the cloudsmith repo
+
+source /usr/local/greenplum-db/greenplum_path.sh
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk/jre/
+export PXF_BASE=/home/gpadmin/pxf-base
+export PXF_HOME=/usr/local/pxf-gp6
+export PATH=$PXF_HOME/bin/:$PATH
+
+cd /tmp/pxf
+make clean && make CC=gcc
+make -C /tmp/pxf install-server cli
+make -C /tmp/pxf/external-table install
+
+chown -R gpadmin:gpadmin /usr/local/pxf-gp6 && \
+echo "export PXF_BASE=/home/gpadmin/pxf-base" >> /home/gpadmin/.bashrc && \
+echo "export PXF_HOME=/usr/local/pxf-gp6" >> /home/gpadmin/.bashrc && \
+echo "export PATH=$PATH:/usr/local/pxf-gp6/bin" >> /home/gpadmin/.bashrc
+
+pxf prepare
+pxf register
+#pxf start
+# PXF Build and Install END
 
 echo '
 ===========================
