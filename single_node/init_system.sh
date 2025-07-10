@@ -15,6 +15,10 @@ if ! sudo /usr/sbin/sshd; then
     exit 1
 fi
 
+#if ! sudo systemctl start postfix; then
+#    echo "Failed to start sendmail daemon" >&2
+#    exit 1
+#fi
 sudo ln -sf /usr/bin/python2.7 /usr/bin/python
 
 # ----------------------------------------------------------------------
@@ -94,18 +98,8 @@ fi
 source /usr/local/greenplum-db/greenplum_path.sh
 export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk/jre/
 export PXF_BASE=/home/gpadmin/pxf-base
-export PXF_HOME=/usr/local/pxf-gp6
+export PXF_HOME=/usr/local/edb-whpg6-pxf
 export PATH=$PXF_HOME/bin/:$PATH
-
-cd /tmp/pxf
-make clean && make CC=gcc
-make -C /tmp/pxf install-server cli
-make -C /tmp/pxf/external-table install
-
-chown -R gpadmin:gpadmin /usr/local/pxf-gp6 && \
-echo "export PXF_BASE=/home/gpadmin/pxf-base" >> /home/gpadmin/.bashrc && \
-echo "export PXF_HOME=/usr/local/pxf-gp6" >> /home/gpadmin/.bashrc && \
-echo "export PATH=$PATH:/usr/local/pxf-gp6/bin" >> /home/gpadmin/.bashrc
 
 pxf prepare
 pxf register

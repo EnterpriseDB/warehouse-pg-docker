@@ -60,14 +60,19 @@ RUN     echo root:admin@123 | chpasswd && \
                        readline-devel \
                        zlib-devel && \
         dnf install -y --enablerepo=epel \
-                       xerces-c-devel
+                       xerces-c-devel && \
+        dnf install -y postfix \
+                       bind-utils \
+                       telnet
 
 
 #Sets-up the Cloudsmith dev repo
 RUN --mount=type=secret,id=EDB_REPO_TOKEN curl -1Lf https://downloads.enterprisedb.com/$(cat /run/secrets/EDB_REPO_TOKEN)/gpsupp/setup.rpm.sh | sudo bash
 
-# Installs the WarehousePG Binary
-RUN dnf -y install warehouse-pg-6
+# ------------------------
+# Install WHPG and PXF
+# ------------------------
+RUN dnf -y install warehouse-pg-6 edb-whpg6-pxf
 
 COPY gpinitsystem_singlenode /tmp/
 COPY init_system.sh /tmp/
@@ -98,10 +103,10 @@ RUN     echo "mdw" > /tmp/gpdb-hosts && \
         echo "root           ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers && \
         echo "export MASTER_DATA_DIRECTORY=/data/master/gpseg-1" >> /home/gpadmin/.bashrc && \
         echo "source /usr/local/greenplum-db/greenplum_path.sh"                >> /home/gpadmin/.bashrc && \
-        #chown -R gpadmin:gpadmin /usr/local/pxf-gp6 && \
-        #echo "export PXF_BASE=/home/gpadmin/pxf-base" >> /home/gpadmin/.bashrc && \
-        #echo "export PXF_HOME=/usr/local/pxf-gp6" >> /home/gpadmin/.bashrc && \
-        #echo "export PATH=$PATH:/usr/local/pxf-gp6/bin" >> /home/gpadmin/.bashrc && \
+        chown -R gpadmin:gpadmin /usr/local/edb-whpg6-pxf && \
+        echo "export PXF_BASE=/home/gpadmin/pxf-base" >> /home/gpadmin/.bashrc && \
+        echo "export PXF_HOME=/usr/local/edb-whpg6-pxf" >> /home/gpadmin/.bashrc && \
+        echo "export PATH=/usr/local/edb-whpg6-pxf/bin:$PATH" >> /home/gpadmin/.bashrc && \
         sudo chown -R gpadmin:gpadmin /usr/local/greenplum-db-6.27.1/ && \
         mkdir -p /data/master /data/primary /data/mirror && \
         chown -R gpadmin:gpadmin /data && \
@@ -113,20 +118,11 @@ RUN sudo dnf -y install java-1.8.0-openjdk-devel && \
     echo "export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk/jre/" >> /home/gpadmin/.bashrc
 
 # ------------------------
-# Build and Install PXF
-# ------------------------
-
-# CLONE PXF REPO
-RUN git clone https://github.com/greenplum-db/pxf-archive.git /tmp/pxf && \
-    mkdir /usr/local/pxf-gp6 && \
-    chown -R gpadmin:gpadmin /tmp/pxf && \
-    chown -R gpadmin:gpadmin /usr/local/pxf-gp6
-
-# ------------------------
 # Install Hadoop 3.3.6
 # ------------------------
 
-COPY ./hadoop/config/core-site.xml /tmp
+COPY ./config/hadoop/core-site.xml /tmp
+COPY ./config/hive/hive-site.xml /tmp
 
 ENV HADOOP_VERSION=3.3.6
 ENV HADOOP_HOME=/opt/hadoop
@@ -155,6 +151,28 @@ RUN mkdir -p /home/hadoop/.ssh && \
     chmod 600 /home/hadoop/.ssh/authorized_keys
 
 RUN $HADOOP_HOME/bin/hdfs namenode -format -nonInteractive
+
+
+# ------------------------
+# Setup Hive
+# ------------------------
+
+USER root
+
+ENV HIVE_VERSION=3.1.3
+ENV HIVE_HOME=/opt/hive
+ENV PATH=$HIVE_HOME/bin:$PATH
+
+RUN wget https://archive.apache.org/dist/hive/hive-${HIVE_VERSION}/apache-hive-${HIVE_VERSION}-bin.tar.gz && \
+    tar -xzf apache-hive-${HIVE_VERSION}-bin.tar.gz -C /opt && \
+    sudo mv /opt/apache-hive-${HIVE_VERSION}-bin $HIVE_HOME && \
+    chown -R hadoop:hadoop /opt/hive
+
+RUN echo "export HIVE_HOME=/opt/hive" >> home/hadoop/.bashrc && \
+    echo "export PATH=$HIVE_HOME/bin:$PATH" >> home/hadoop/.bashrc
+
+
+RUN cp ./tmp/hive-site.xml $HIVE_HOME/conf/
 
 
 # ----------------------------------------------------------------------

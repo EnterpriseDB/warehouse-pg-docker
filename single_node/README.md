@@ -246,9 +246,107 @@ select * from r_pxf_data;
 (4 rows)
 ```
 
+## Hive Setup
+
+To Start hive metastore:
+1. `sudo su - hadoop`
+
+```bash
+schematool -initSchema -dbType derby
+hive --service metastore &
+```
+
+`schematool -initSchema -dbType derby` This initialization of schema needs to be done only once. 
+
+2. Generate sample data
+
+```bash
+echo -e "1\tAlice\n2\tCharlie\n3\tEmily" > /tmp/employee.txt
+```
+
+2. Create an Employee table in hive
+
+```bash
+hive
+
+
+CREATE TABLE employee (
+  id INT,
+  name STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\t'
+STORED AS TEXTFILE;
+```
+
+3. Run `Show tables;`  (optional)
+
+4. Load data into the employee table 
+
+```bash
+LOAD DATA LOCAL INPATH '/tmp/employee.txt' INTO TABLE employee;
+```
+
+5. Select table
+
+```bash
+select * from employee;
+```
+
+6. Exit `hadoop` user:
+
+```bash
+exit
+```
+Now you are back to the `gpadmin` user where `warehouse-pg` and PXF are running. 
+
+
+## Retrieving Hive Data
+
+1. Create a hive server directory in $PXF_BASE/servers:
+
+```bash
+mkdir -p $PXF_BASE/servers/srvr_hive
+```
+
+2.  Copy `$PXF_HOME/templates/core-site.xml`  and `$PXF_HOME/templates/hive-site.xml` to `srvr_hive`
+
+```bash
+cp $PXF_HOME/templates/core-site.xml $PXF_BASE/servers/srvr_hive
+cp $PXF_HOME/templates/hive-site.xml $PXF_BASE/servers/srvr_hive
+```
+
+Inspect the contents of `$PXF_BASE/servers/srvr_hive\hive-site.xml`. We are using same configuration in `$HIVE_HOME/conf/hive_site.xml` to run hive metastore.   
+
+3. Restart pxf
+
+```bash
+pxf restart
+```
+
+4. Create an `external table` to read from Hive date using hive profile: 
+
+```bash
+CREATE EXTERNAL TABLE emp_hive (id int, name text)
+  location ('pxf://default.employee?PROFILE=hive&SERVER=srvr_hive')
+FORMAT 'CUSTOM' (FORMATTER='pxfwritable_import');
+```
+
+5. Run select query to read the data:
+
+```bash
+select * from emp_hive ;
+ id |  name
+----+---------
+  1 | Alice
+  2 | Charlie
+  3 | Emily
+  (3 rows)
+```
 ## What We did here:
 
 - Ran WarehousePG in a Docker container.
 - Integrated Hadoop with WarehousePG using PXF.
-- Read and wrote data to/from Hadoop via external tables.
+- Read and wrote data to/from Hadoop using PXF external tables.
+- Read data from Hive using PXF external tables.
 
