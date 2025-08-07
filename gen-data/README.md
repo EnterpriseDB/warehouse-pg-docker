@@ -46,6 +46,22 @@ You will be prompted to enter:
 * Number of rows to generate.
 * Batch insert size.
 
+Example:
+
+```bash
+🔐 Enter database connection details:
+Database name: gpadmin
+Username: gpadmin
+Password:
+Host (default 'localhost'):
+Port (default 5432):
+Schema name (default 'public'):
+Table name: orders
+Number of rows to generate: 1000
+Batch insert size (e.g. 1000): 100
+Inserted 1000 rows...
+✅ Inserted 1000 rows into public.orders.
+```
 ---
 
 ## How it works
