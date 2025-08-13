@@ -1,14 +1,14 @@
 
 # Data Generator for PostgreSQL / WarehousePG
 
-This Python script generates and inserts fake data into a specified PostgreSQL or Greenplum table, including support for partitioned tables (range and list partitions).
+This Python script generates and inserts fake data into a specified PostgreSQL or WarehousePG table, including support for partitioned tables (range and list partitions).
 
 ---
 
 ## Prerequisites
 
 - Python 3.7+
-- PostgreSQL or Greenplum database with accessible tables.
+- PostgreSQL or WarehousePG database with accessible tables.
 - Required Python packages listed in `requirements.txt`.
 
 ---
@@ -22,17 +22,21 @@ git clone https://github.com/warehouse-pg/whpg-docker.git
 cd whpg-docker/gen-data
 ````
 
-3. Install dependencies:
+3. Build and start the container
 
 ```bash
-pip install -r requirements.txt
+docker compose up --build --detach
 ```
 
+4. Access the `data-host` Host
+
+```bash
+docker exec -it data-host /bin/bash
+```
 ---
 
-## Usage
+## Run the script
 
-Run the script:
 
 ```bash
 python generate_data.py
@@ -40,37 +44,51 @@ python generate_data.py
 
 You will be prompted to enter:
 
-* Database connection details (host, port, username, password, dbname).
+* Host Name and Port
+* Database connection Params (username, password, dbname).
 * Schema name (default: `public`).
 * Table name.
+* If the table is Partitioned
 * Number of rows to generate.
 * Batch insert size.
 
 Example:
 
 ```bash
-🔐 Enter database connection details:
+ENTER HOST DETAILS:
+===========================
+Host (default 'localhost'): cdw
+Port (default 5432):
+===========================
+
+
+ENTER DB CONNECTION PARAMETERS:
+===========================
 Database name: gpadmin
 Username: gpadmin
 Password:
-Host (default 'localhost'):
-Port (default 5432):
 Schema name (default 'public'):
-Table name: orders
-Number of rows to generate: 1000
-Batch insert size (e.g. 1000): 100
-Inserted 1000 rows...
-✅ Inserted 1000 rows into public.orders.
+Table name: listpart
+Is this partition table? (y/n): y
+Number of rows to generate: 100
+Batch insert size (e.g. 1000): 10
+===========================
+
+Inserted 100 rows...
+✅ Inserted 100 rows into public.listpart.
 ```
 ---
 
 ## How it works
 
-1. The script queries the database schema to retrieve the target table's column names and data types.
-2. It detects whether the table is partitioned and tries to extract partition key columns and valid partition values.
-3. For each row, it generates appropriate fake data per column.
-4. Inserts data in batches to improve performance.
-5. Prints a final summary of inserted rows.
+1. This script runs in its own container and can easily to other containers which are present in the same docker network, which in this case is
+    `whpg-network`. So you insert data in your `single_node` or `multi_node` cluster here using this container.
+2. The script queries the database schema to retrieve the target table's column names and data types.
+3. It detects whether the table is partitioned and tries to extract partition key columns and valid partition values.
+4. For each row, it generates appropriate fake data per column.
+5. Inserts data in batches to improve performance.
+6. Prints a final summary of inserted rows.
+7. You can use this to generate data for both WHPG v6.27.1 and v7.2.1
 
 ---
 

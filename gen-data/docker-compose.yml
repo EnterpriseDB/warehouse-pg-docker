@@ -1,0 +1,13 @@
+services:
+  gendata:
+    container_name: data-host
+    build: .
+    hostname: data-host
+    tty: true
+    networks:
+      - whpg-network
+
+networks:
+  whpg-network:
+    external: true
+    name: whpg-network
