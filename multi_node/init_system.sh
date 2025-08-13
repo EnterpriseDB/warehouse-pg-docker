@@ -49,7 +49,7 @@ cat /home/gpadmin/.ssh/id_rsa.pub >> /home/gpadmin/.ssh/authorized_keys
 chmod 600 /home/gpadmin/.ssh/authorized_keys
 
 # Add the container's hostname to the known_hosts file to avoid SSH warnings
-ssh-keyscan -t rsa mdw > /home/gpadmin/.ssh/known_hosts 2>/dev/null
+ssh-keyscan -t rsa cdw > /home/gpadmin/.ssh/known_hosts 2>/dev/null
 
 # Source environment variables and set MASTER_DATA_DIRECTORY
 source /usr/local/greenplum-db/greenplum_path.sh
@@ -59,7 +59,7 @@ export MASTER_DATA_DIRECTORY=/data/master/gpseg-1
 
     sshpass -p "changeme@123" ssh-copy-id -o StrictHostKeyChecking=no sdw1
     sshpass -p "changeme@123" ssh-copy-id -o StrictHostKeyChecking=no sdw2
-    sshpass -p "changeme@123" ssh-copy-id -o StrictHostKeyChecking=no smdw
+    sshpass -p "changeme@123" ssh-copy-id -o StrictHostKeyChecking=no scdw
     #sshpass -p "changeme@123" ssh-copy-id -o StrictHostKeyChecking=no smdw
     gpinitsystem -a \
                  -c /tmp/gpinitsystem_config \
@@ -68,7 +68,7 @@ export MASTER_DATA_DIRECTORY=/data/master/gpseg-1
 
     printf "sdw1\nsdw2\n" >> /tmp/gpdb-hosts
 
-if [ $HOSTNAME == "mdw" ]; then
+if [ $HOSTNAME == "cdw" ]; then
      ## Allow any host access the WarehousePG Cluster
      echo 'host all all 0.0.0.0/0 trust' >> /data/master/gpseg-1/pg_hba.conf
      gpstop -u

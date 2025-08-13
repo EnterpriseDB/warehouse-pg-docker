@@ -1,50 +1,66 @@
 services:
-  master:
-    image: warehousepg-multi-node
-    container_name: mdw
-    hostname: mdw
-    tty: true
+  whpg7_cdw:
+    build:
+      context: .
+      secrets:
+        - repo_token
+    image: whpg7_cdw
     platform: linux/amd64 
+    container_name: cdw
+    hostname: cdw
+    tty: true
     networks:
-      gpdb-network:
+      whpg-network:
     ports:
       - "5432:5432"
     volumes:
       - ./datadirs/master:/data/master
 
-  standby-master:
-    image: warehousepg-multi-node
-    container_name: smdw
-    hostname: smdw
+  whpg7_standby:
+    image: whpg7_cdw
+    depends_on:
+      - whpg7_cdw
+    secrets:
+      - repo_token
+    container_name: scdw
+    hostname: scdw
     tty: true
     platform: linux/amd64
     networks:
-      gpdb-network:
+      whpg-network:
     volumes:
       - ./datadirs/standby:/data/master
 
-  segment1:
-    image: warehousepg-multi-node
+  whpg7_seg1:
+    image: whpg7_cdw
+    depends_on:
+      - whpg7_cdw
+    secrets:
+      - repo_token
     container_name: sdw1
     hostname: sdw1
     tty: true
     platform: linux/amd64
     networks:
-      gpdb-network:
+      whpg-network:
     volumes:
       - ./datadirs/sdw1_primary1:/data1/primary
       - ./datadirs/sdw1_primary2:/data2/primary
       - ./datadirs/sdw1_mirror1:/data1/mirror
       - ./datadirs/sdw1_mirror2:/data2/mirror
 
-  segment2:
-    image: warehousepg-multi-node
+  whpg7_seg2:
+    image: whpg7_cdw
+    depends_on:
+      - whpg7_cdw
+    secrets:
+      - repo_token
     container_name: sdw2
     hostname: sdw2
     tty: true
     platform: linux/amd64
     networks:
-      gpdb-network:
+      whpg-network:
     volumes:
       - ./datadirs/sdw2_primary1:/data1/primary
       - ./datadirs/sdw2_primary2:/data2/primary
@@ -52,5 +68,10 @@ services:
       - ./datadirs/sdw2_mirror2:/data2/mirror
 
 networks:
-  gpdb-network:
+  whpg-network:
     driver: bridge
+    name: whpg-network
+
+secrets:
+  repo_token:
+    environment: EDB_REPO_TOKEN

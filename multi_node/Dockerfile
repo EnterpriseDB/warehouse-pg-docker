@@ -62,19 +62,18 @@ RUN     echo root:changeme@123 | chpasswd && \
         dnf install -y --enablerepo=epel \
                        xerces-c-devel
 
-
 #Sets-up the Cloudsmith dev repo
-RUN --mount=type=secret,id=EDB_REPO_TOKEN curl -1Lf https://downloads.enterprisedb.com/$(cat /run/secrets/EDB_REPO_TOKEN)/gpsupp/setup.rpm.sh | sudo bash
+RUN --mount=type=secret,id=repo_token bash -c 'curl -1Lf https://downloads.enterprisedb.com/$(cat /run/secrets/repo_token)/gpsupp/setup.rpm.sh | sudo bash'
 
 # Installs the WarehousePG Binary
-RUN dnf -y install warehouse-pg-6
+RUN dnf -y install warehouse-pg-7
 
 COPY gpinitsystem_config /tmp/
 COPY hostfile_gpinitsystem /tmp/
 COPY init_system.sh /tmp/
 
 
-RUN     echo "mdw" > /tmp/gpdb-hosts && \
+RUN     echo "cdw" > /tmp/gpdb-hosts && \
         echo "/usr/local/lib" >> /etc/ld.so.conf && \
         echo "/usr/local/lib64" >> /etc/ld.so.conf && \
         ldconfig && \

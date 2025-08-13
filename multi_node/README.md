@@ -41,38 +41,31 @@ mkdir -p datadirs/sdw1_primary1 datadirs/sdw1_primary2 datadirs/sdw1_mirror1 dat
 mkdir -p datadirs/sdw2_primary1 datadirs/sdw2_primary2 datadirs/sdw2_mirror1 datadirs/sdw2_mirror2
 ```
 
-## 5. Build the WarehousePG Docker Image
-Build the WarehousePG Docker image using the following command:
+## 5. Build WarehousePG Docker Image and Start the container
+Run the following command to build the docker image and start the container.
 
 ```bash
-docker build --secret id=EDB_REPO_TOKEN --platform linux/amd64 --no-cache -t warehousepg-multi-node .
+DOCKER_BUILDKIT=1 docker compose up --build --detach
 ```
+Note: This process may take a few minutes.
 
-## 6. Start the WarehousePG Cluster
-Start the cluster using Docker Compose:  
+This will start a multi-node WarehousePG `7.2.1` cluster: 
 
-```bash
-docker compose -f docker-compose.yml up --detach
-```
+- **cdw**: Coordinator Node
+- **csdw**: Standby Coordinator Node
+- **sdw1**: Segment Node 1
+- **sdw2**: Segment Node 2
 
-This may take few minutes. 
-
-This will start the following containers:  
-- **mdw** → WarehousePG Master Node
-- **smdw** → WarehousePG Standby Master Node
-- **sdw1** → WarehousePG Segment Node 1
-- **sdw2** → WarehousePG Segment Node 2
-
-## 7. Connect to Master Host
+## 7. Access the Coordinator Host
  
 ```bash
-docker exec -it mdw /bin/bash
+docker exec -it cdw /bin/bash
 ```
 
-Standby Mater Host `smdw` is configured but not initiated. To add the Standby Master Host, run the follwing command:
+Standby Mater Host `csdw` is configured but not initiated. To add the Standby Master Host, run the follwing command:
 
 ```bash
-gpgpinitstandby -s smdw
+gpgpinitstandby -s csdw
 ```
 
 ## 8. Stopping and Restarting the Cluster  
@@ -80,15 +73,15 @@ gpgpinitstandby -s smdw
 - **Stop without removing data**:  
 
   ```bash
-  docker compose -f docker-compose.yml stop
+  docker compose stop
   ```
 
 - **Restart the cluster with existing data**:  
 
   ```bash
-  docker compose -f docker-compose.yml start
+  docker compose start
 
-  docker exec -it mdw /bin/bash
+  docker exec -it cdw /bin/bash
 
   gpstart -a
   ```
@@ -100,7 +93,7 @@ gpgpinitstandby -s smdw
   Following command will stop the multi-container deployment and also remove the network and volumes that belong to the containers. Running this command means it will delete the containers as well as remove the volumes that the containers are associated with.
 
   ```bash
-  docker compose -f docker-compose.yml down -v
+  docker compose down -v
   ```
 
   This will not remove the `datadirs` from your host machine, so these needs to be removed manually.

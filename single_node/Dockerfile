@@ -66,13 +66,19 @@ RUN     echo root:admin@123 | chpasswd && \
                        telnet
 
 
+RUN --mount=type=secret,id=repo_token \
+   sh -c 'TOKEN=$(cat /run/secrets/repo_token) && echo "Token is: $TOKEN"'
+
+
+
 #Sets-up the Cloudsmith dev repo
-RUN --mount=type=secret,id=EDB_REPO_TOKEN curl -1Lf https://downloads.enterprisedb.com/$(cat /run/secrets/EDB_REPO_TOKEN)/gpsupp/setup.rpm.sh | sudo bash
+RUN --mount=type=secret,id=repo_token bash -c 'curl -1Lf https://downloads.enterprisedb.com/$(cat /run/secrets/repo_token)/gpsupp/setup.rpm.sh | sudo bash'
 
 # ------------------------
 # Install WHPG and PXF
 # ------------------------
 RUN dnf -y install warehouse-pg-6 edb-whpg6-pxf
+
 
 COPY gpinitsystem_singlenode /tmp/
 COPY init_system.sh /tmp/

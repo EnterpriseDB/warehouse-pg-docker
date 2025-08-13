@@ -1,19 +1,28 @@
 services:
-  master:
-    image: warehousepg-el8
+  whpg6:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      secrets:
+        - repo_token
+    platform: linux/amd64
     container_name: mdw
     hostname: mdw
     tty: true
-    platform: linux/amd64 
     networks:
-      gpdb-network:
+      whpg-network:
     ports:
-      - "5432:5432"
+      - "5555:5555"
     volumes:
       - ./datadirs/master:/data/master
       - ./datadirs/primary:/data/primary
       - ./datadirs/mirror:/data/mirror
 
 networks:
-  gpdb-network:
+  whpg-network:
     driver: bridge
+    name: whpg-network
+
+secrets:
+  repo_token:
+    environment: EDB_REPO_TOKEN

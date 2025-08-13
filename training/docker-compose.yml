@@ -6,7 +6,7 @@ services:
     tty: true
     platform: linux/amd64 
     networks:
-      gpdb-network:
+      whpg-network:
     ports:
       - "5555:5555"
 
@@ -17,7 +17,7 @@ services:
     tty: true
     platform: linux/amd64
     networks:
-      gpdb-network:
+      whpg-network:
 
   segment2:
     image: whpg-training
@@ -26,8 +26,9 @@ services:
     tty: true
     platform: linux/amd64
     networks:
-      gpdb-network:
+      whpg-network:
 
 networks:
-  gpdb-network:
+  whpg-network:
     driver: bridge
+    name: whpg-network

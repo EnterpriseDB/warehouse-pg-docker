@@ -28,71 +28,49 @@ If you are using `bash`
 echo 'export EDB_REPO_TOKEN=<YOUR TOKEN>' >> ~/.bashrc
 source ~/.bashrc
 ```
-
-### 3. Enable Docker BuildKit
-
-First, enable Docker BuildKit to improve the build performance and capabilities:
-
-```bash
-export DOCKER_BUILDKIT=1
-```
-
-### 4. Create Data Directories 
+### 3. Create Data Directories
 
 ```
 mkdir -p datadirs/master datadirs/primary datadirs/mirror
 ```
+### 4. Build WarehousePG Docker Image and Start the container
 
-### 5. Build the Docker Image
-
-Use the following command to build the Docker image, specifying the secret `EDB_REPO_TOKEN`:
-
-```bash
-docker build --secret id=EDB_REPO_TOKEN --platform linux/amd64 --no-cache -t warehousepg-el8 .
-```
-
-### 6. Start the WarehousePG Cluster 
-
-After building the image, you can start the cluster using Docker Compose:
+Run the following command to build the docker image and start the container.
 
 ```bash
-docker compose -f docker-compose.yml up --detach
+DOCKER_BUILDKIT=1 docker compose up --build --detach
 ```
 Note: This process may take a few minutes.
 
 This will start the following:
 
-`mdw` - A single-node WarehousePG cluster with PXF installed. Hadoop is configured as well and can be started manually.
+`mdw` - A single-node WarehousePG `6.27.1` cluster with PXF installed. Hadoop is configured as well and can be started manually.
 Refer to [Configuring PXF with WarehousePG](#configuring-pxf-with-warehousepg) to setup PXF and Hadoop.
 
-### 7. Connect Back to the Container
-
-To connect back to the running Docker container, use the following command:
+### 5. Access the Master Host
 
 ```bash
 docker exec -it mdw /bin/bash
 ```
 
-If it doesn't work, start the container and then connect again:
-
-```bash
-docker start mdw
-docker exec -it mdw /bin/bash
-```
-
-### 8. Starting and Stopping the Container
-
-- **To start the container**:
+- **Restart the cluster with existing data**:
 
   ```bash
-  docker start mdw
-  ```
+  docker compose start
 
-- **To stop the container**:
+  docker exec -it mdw /bin/bash
+
+  gpstart -a
+  ```
+- **Remove everything (including data)**:
+
+  Following command will stop the deployment and also remove the network and volumes that belong to the containers. Running this command means it will delete the containers as well as remove the volumes that the containers are associated with.
 
   ```bash
-  docker stop mdw
+  docker compose down -v
   ```
+
+  This will not remove the `datadirs` from your host machine, so these needs to be removed manually.
 
 ## Configuring PXF with WarehousePG
 

@@ -25,7 +25,7 @@ PORT_BASE=6000
 declare -a DATA_DIRECTORY=(/data1/primary /data1/primary /data1/primary /data2/primary /data2/primary /data2/primary)
 
 #### OS-configured hostname or IP address of the master host.
-MASTER_HOSTNAME=mdw
+MASTER_HOSTNAME=cdw
 
 #### File system location where the master data directory
 #### will be created.
