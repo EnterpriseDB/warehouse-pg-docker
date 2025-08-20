@@ -52,7 +52,7 @@ Note: This process may take a few minutes.
 This will start a multi-node WarehousePG `7.2.1` cluster: 
 
 - **cdw**: Coordinator Node
-- **csdw**: Standby Coordinator Node
+- **scdw**: Standby Coordinator Node
 - **sdw1**: Segment Node 1
 - **sdw2**: Segment Node 2
 
@@ -62,10 +62,10 @@ This will start a multi-node WarehousePG `7.2.1` cluster:
 docker exec -it cdw /bin/bash
 ```
 
-Standby Mater Host `csdw` is configured but not initiated. To add the Standby Master Host, run the follwing command:
+Standby Mater Host `scdw` is configured but not initiated. To add the Standby Master Host, run the follwing command:
 
 ```bash
-gpgpinitstandby -s csdw
+gpinitstandby -s scdw
 ```
 
 ## 8. Stopping and Restarting the Cluster  
