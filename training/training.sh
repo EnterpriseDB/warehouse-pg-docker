@@ -89,7 +89,7 @@ if ! is_done "setup_ssh_keys"; then
         echo -e "${RED}❌ SSH keys missing!${RESET}"
         echo -e ""
 
-        echo -e "${BLUE} The 'gpadmin' user on each WarehousePG host must have an.\n"\
+        echo -e "${BLUE} The 'gpadmin' user on each WarehousePG host must have\n"\
         "SSH key pair installed and be able to SSH from any host in the cluster to\n"\
         "called 'passwordless SSH'${RESET}"
 
