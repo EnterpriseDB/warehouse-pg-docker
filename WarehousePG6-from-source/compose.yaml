@@ -1,0 +1,13 @@
+services:
+  sne:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "6432:5432"
+    volumes:
+      - ./data:/whpgdata
+    environment:
+      - container=docker
+    platform: linux/amd64
+    hostname: whpgdb-primary

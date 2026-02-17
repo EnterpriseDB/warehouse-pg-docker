@@ -1,0 +1,25 @@
+services:
+  sne:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      secrets:
+        - edbtoken_secret
+        - edbrepository_secret
+    secrets:
+      - edbtoken_secret
+      - edbrepository_secret
+    ports:
+      - "6432:5432"
+    volumes:
+      - ./data:/whpgdata
+    environment:
+      - container=docker
+    platform: linux/amd64
+    hostname: whpgdb-primary
+
+secrets:
+  edbtoken_secret:
+    environment: EDBTOKEN
+  edbrepository_secret:
+    environment: EDBREPOSITORY

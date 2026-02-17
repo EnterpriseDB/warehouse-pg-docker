@@ -1,0 +1,54 @@
+glibc-common
+pkgconfig
+sudo
+passwd
+which
+less
+ed
+vim
+wget
+git
+tar
+libzstd
+zlib
+zip unzip
+perl perl-core perl-Env perl-ExtUtils-Embed perl-Test-Simple
+readline
+openssl
+pam
+libxml2
+krb5-devel
+python2 python2-pytest python2-lxml python2-psutil python2-pyyaml
+make
+diffutils
+libevent
+boost
+thrift
+xerces-c xerces-c
+java-11-openjdk
+maven
+apr
+libtool
+bzip2 bzip2
+iproute
+rsync
+openssh-server openssh-clients
+iputils
+procps
+createrepo_c
+initscripts
+libuuid
+lz4
+m4
+nc
+net-tools
+openldap
+pinentry
+rpm-build rpm-sign rpmdevtools
+util-linux-ng
+tmux
+screen
+dnf-plugins-core
+libyaml libyaml-devel
+libuv
+perl-IPC-Run

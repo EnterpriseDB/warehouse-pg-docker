@@ -1,27 +1,73 @@
-
 # WarehousePG Docker Setup
 
 This repository provides Docker configurations for setting up WarehousePG in both single-node and multi-node configurations.
 
 ## Table of Contents
 
-- [Single Node Setup](#single-node-setup)
-- [Multi Node Setup](#multi-node-setup)
-- [Interactive Training](#interactive-training)
-- [Build WarehousePG From Source](#build-warehousepg-from-src)
+- `WarehousePG6-from-RPMs-single-node`: WarehousePG v6, single node, installed from RPMs
+- `WarehousePG6-from-source`: WarehousePG v6, single node, built from source code
+- `WarehousePG7-from-RPMs-multi-node`: WarehousePG v7, coordinator + 2 segment hosts, installed from RPMs
+- `WarehousePG7-from-RPMs-multi-node-standby-mirrors`: WarehousePG v7, coordinator + 2 segment hosts, standby coordinator and mirrors enabled, installed from RPMs
+- `WarehousePG7-from-RPMs-single-node`: WarehousePG v7, single node, installed from RPMs
+- `WarehousePG7-from-RPMs-single-node-not-installed`: WarehousePG v7, single node, installed from RPMs, database not configured (for trying out install options)
+- `WarehousePG7-from-source`: WarehousePG v7, single node, built from source code
+
+## Installation
+
+You need an EDB token in order to download RPM packages:
+
+To get a token:
+
+- go to `https://enterprisedb.com/`
+- Sign in
+- Go to "My Account" (in the upper right corner)
+- Select "Account Settings" from Dropdown
+- Under "Profile", copy the first line, that's the "Repos 2.0" token
+- Create the file "~/.edb-token" and copy the token into the file
+
+Your token matches a specific repository. You should have received this information along with the token.
+For EDB employees the personal token is for the "dev" repository.
+Create the file "~/.edb-repository", add one of: "dev", "staging_gpsupp", "gpsupp".
+
+Check your Docker settings, allow enough disk space, RAM and CPU for Docker.
+For building all images consider 50-60 GB disk space.
+
+Note: the containers build from source do not need a token.
 
 ## Single Node Setup
 
-For detailed instructions on setting up WarehousePG in a single-node Docker environment, please refer to the [README](https://github.com/warehouse-pg/whpg-docker/tree/main/single_node) inside the `single-node` folder.
+A single node setup includes the coordinator and multiple segment databases (2 in this case) in a single machine or container. No network setup is required.
+
+The following setups are single node:
+
+- `WarehousePG6-from-RPMs-single-node`
+- `WarehousePG6-from-source`
+- `WarehousePG7-from-RPMs-single-node`
+- `WarehousePG7-from-RPMs-single-node-not-installed`
+- `WarehousePG7-from-source`
 
 ## Multi Node Setup
 
-For detailed instructions on setting up WarehousePG in a multi-node Docker environment, please refer to the [README](https://github.com/warehouse-pg/whpg-docker/tree/main/multi_node) inside the `multi-node` folder.
+A multi node setup includes multiple machines or containers. One system is used for the coordinator, other systems for segment databases (2 segment hosts with 2 segment databases each in this case). Network connectivity is required, and provided by Docker.
+
+The following setups are multi-node:
+
+- `WarehousePG7-from-RPMs-multi-node` (no standby coordinator, no mirror segments)
+- `WarehousePG7-from-RPMs-multi-node-standby-mirrors` (includes standby coordinator, includes mirror segments)
 
 ## Interactive Training
 
 For detailed instructions on setting up WarehousePG from scratch, please refer to the [README](https://github.com/warehouse-pg/whpg-docker/tree/main/training) inside the `training` folder.
 
+The `WarehousePG7-from-RPMs-single-node-not-installed` lab can be used here, this container has the RPM packages pre-installed, but WarehousePG is not configured. Necessary files are available in `/home/gpadmin` in the container (use `make access` to drop into a shell once the container is started).
+
 ## Build WarehousePG From Source
 
-For instructions on building WarehousePG from source code, please refer to the [README](https://github.com/warehouse-pg/whpg-docker/tree/main/build-from-src) inside the `build-from-src` folder.
+For instructions on building WarehousePG from source code, please refer to the [README](https://github.com/warehouse-pg/whpg-docker/tree/main/build-from-source) inside the `build-from-source` folder.
+
+The containers `WarehousePG6-from-source` and `WarehousePG7-from-source` build WarehousePG from source. Refer to the `Dockerfile` in each directory for detailed instructions how to build the database from source.
+
+## Training
+
+Detailed instructions how to setup the *WarehousePG* database on your own are available in the [Training](training.dm) document.
+
