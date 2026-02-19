@@ -1,0 +1,59 @@
+glibc-langpack-en
+pkgconfig
+sudo
+passwd
+which
+less
+ed
+vim
+wget
+git
+bison
+flex
+tar
+libzstd-devel
+zlib-devel
+zip unzip
+perl perl-core perl-Env perl-ExtUtils-Embed perl-Test-Simple
+readline-devel
+openssl-devel
+pam-devel
+libxml2-devel
+krb5-devel
+python3-devel python3-pytest python3-lxml python3-psutil python3-pyyaml
+cmake cmake3
+gcc gcc-c++
+make
+diffutils
+libevent-devel
+curl-devel libcurl-devel
+boost-devel 
+thrift-devel
+xerces-c xerces-c-devel
+java-11-openjdk java-11-openjdk-devel
+maven
+apr apr-devel
+automake
+libtool
+autoconf
+bzip2 bzip2-devel
+iproute
+rsync
+openssh-server openssh-clients
+iputils
+procps
+createrepo_c
+glibc-langpack-en
+initscripts
+libuuid-devel
+lz4 lz4-devel
+m4
+nc
+net-tools
+openldap-devel
+pinentry
+rpm-build rpm-sign rpmdevtools
+util-linux-ng
+tmux
+screen
+sshpass

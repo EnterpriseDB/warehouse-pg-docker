@@ -1,0 +1,170 @@
+services:
+  coordinator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      secrets:
+        - edbtoken_secret
+        - edbrepository_secret
+    deploy:
+      resources:
+        limits:
+          cpus: 4.0
+          memory: 4gb
+        reservations:
+          cpus: 1.0
+          memory: 1gb
+    secrets:
+      - edbtoken_secret
+      - edbrepository_secret
+    ports:
+      - "6432:5432"
+    volumes:
+      - ./data/coordinator/data:/whpgdata
+#      - ./data/coordinator/gpadmin_ssh:/home/gpadmin/.ssh
+#      - ./data/coordinator/root_ssh:/root/.ssh
+#      - ./data/coordinator/etc_ssh:/etc/ssh
+    environment:
+      - container=docker
+    platform: linux/amd64
+    hostname: coordinator
+    networks:
+      whpg-sme-network:
+
+  standby:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      secrets:
+        - edbtoken_secret
+        - edbrepository_secret
+    deploy:
+      resources:
+        limits:
+          cpus: 4.0
+          memory: 4gb
+        reservations:
+          cpus: 1.0
+          memory: 1gb
+    secrets:
+      - edbtoken_secret
+      - edbrepository_secret
+    ports:
+      - "6433:5432"
+    volumes:
+      - ./data:/whpgdata
+      - ./data/standby/data:/whpgdata
+#      - ./data/standby/gpadmin_ssh:/home/gpadmin/.ssh
+#      - ./data/standby/root_ssh:/root/.ssh
+#      - ./data/standby/etc_ssh:/etc/ssh
+    environment:
+      - container=docker
+    platform: linux/amd64
+    hostname: standby
+    networks:
+      whpg-sme-network:
+
+  seg1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      secrets:
+        - edbtoken_secret
+        - edbrepository_secret
+    deploy:
+      resources:
+        limits:
+          cpus: 4.0
+          memory: 4gb
+        reservations:
+          cpus: 2.0
+          memory: 2gb
+    secrets:
+      - edbtoken_secret
+      - edbrepository_secret
+    volumes:
+      - ./data:/whpgdata
+      - ./data/seg1/data:/whpgdata
+#      - ./data/seg1/gpadmin_ssh:/home/gpadmin/.ssh
+#      - ./data/seg1/root_ssh:/root/.ssh
+#      - ./data/seg1/etc_ssh:/etc/ssh
+    environment:
+      - container=docker
+    platform: linux/amd64
+    hostname: seg1
+    networks:
+      whpg-sme-network:
+
+  seg2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      secrets:
+        - edbtoken_secret
+        - edbrepository_secret
+    deploy:
+      resources:
+        limits:
+          cpus: 4.0
+          memory: 4gb
+        reservations:
+          cpus: 2.0
+          memory: 2gb
+    secrets:
+      - edbtoken_secret
+      - edbrepository_secret
+    volumes:
+      - ./data:/whpgdata
+      - ./data/seg2/data:/whpgdata
+#      - ./data/seg2/gpadmin_ssh:/home/gpadmin/.ssh
+#      - ./data/seg2/root_ssh:/root/.ssh
+#      - ./data/seg2/etc_ssh:/etc/ssh
+    environment:
+      - container=docker
+    platform: linux/amd64
+    hostname: seg2
+    networks:
+      whpg-sme-network:
+
+  gpfdist:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      secrets:
+        - edbtoken_secret
+        - edbrepository_secret
+    deploy:
+      resources:
+        limits:
+          cpus: 2.0
+          memory: 1gb
+        reservations:
+          cpus: 1.0
+          memory: 1gb
+    secrets:
+      - edbtoken_secret
+      - edbrepository_secret
+    volumes:
+      - ./data:/whpgdata
+      - ./data/gpfdist/data:/whpgdata
+#      - ./data/gpfdist/gpadmin_ssh:/home/gpadmin/.ssh
+#      - ./data/gpfdist/root_ssh:/root/.ssh
+#      - ./data/gpfdist/etc_ssh:/etc/ssh
+    environment:
+      - container=docker
+    platform: linux/amd64
+    hostname: gpfdist
+    networks:
+      whpg-sme-network:
+
+
+secrets:
+  edbtoken_secret:
+    environment: EDBTOKEN
+  edbrepository_secret:
+    environment: EDBREPOSITORY
+
+
+networks:
+  whpg-sme-network:
+    driver: bridge
