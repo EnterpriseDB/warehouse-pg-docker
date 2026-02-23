@@ -91,7 +91,7 @@ RUN /root/setup.rpm.sh
 RUN mkdir /root/rpm-downloads
 RUN dnf install -y --downloadonly --downloaddir=/root/rpm-downloads warehouse-pg-7
 RUN dnf install -y --downloadonly --downloaddir=/root/rpm-downloads warehouse-pg-clients
-RUN dnf install -y --downloadonly --downloaddir=/root/rpm-downloads gpbackup
+RUN dnf install -y --downloadonly --downloaddir=/root/rpm-downloads whpg-backup
 
 
 #######################################################################

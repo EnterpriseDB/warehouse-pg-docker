@@ -100,7 +100,7 @@ RUN yum install -y warehouse-pg-6
 # clients are already included in the server package
 #RUN yum install -y warehouse-pg-clients
 # installation goes into /usr/local/bin
-RUN yum install -y gpbackup
+RUN yum install -y whpg-backup
 
 
 # switch to gpadmin user, do not build as root

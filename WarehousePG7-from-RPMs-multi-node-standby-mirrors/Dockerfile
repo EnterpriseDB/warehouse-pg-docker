@@ -94,7 +94,7 @@ RUN dnf install -y warehouse-pg-7
 # clients are already included in the server package
 #RUN dnf install -y warehouse-pg-clients
 # installation goes into /usr/local/bin
-RUN dnf install -y gpbackup
+RUN dnf install -y whpg-backup
 
 
 # switch to gpadmin user, do not build as root
