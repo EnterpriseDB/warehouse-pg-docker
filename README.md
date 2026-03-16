@@ -57,17 +57,10 @@ The following setups are multi-node:
 
 ## Interactive Training
 
-For detailed instructions on setting up WarehousePG from scratch, please refer to the [README](https://github.com/warehouse-pg/whpg-docker/tree/main/training) inside the `training` folder.
+For detailed instructions on setting up WarehousePG from scratch, please refer to the [training](training.md) document.
 
 The `WarehousePG7-from-RPMs-single-node-not-installed` lab can be used here, this container has the RPM packages pre-installed, but WarehousePG is not configured. Necessary files are available in `/home/gpadmin` in the container (use `make access` to drop into a shell once the container is started).
 
 ## Build WarehousePG From Source
 
-For instructions on building WarehousePG from source code, please refer to the [README](https://github.com/warehouse-pg/whpg-docker/tree/main/build-from-source) inside the `build-from-source` folder.
-
 The containers `WarehousePG6-from-source` and `WarehousePG7-from-source` build WarehousePG from source. Refer to the `Dockerfile` in each directory for detailed instructions how to build the database from source.
-
-## Training
-
-Detailed instructions how to setup the *WarehousePG* database on your own are available in the [Training](training.dm) document.
-
