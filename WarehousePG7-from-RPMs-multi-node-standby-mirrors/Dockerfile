@@ -201,6 +201,7 @@ RUN sudo mkdir -p /whpgdata/coordinator /whpgdata/segments /whpgdata/segments/wh
 
 COPY --chown=gpadmin:gpadmin hostfile_whpginitsystem7 /home/gpadmin/hostfile_whpginitsystem
 COPY --chown=gpadmin:gpadmin hostfile_segments_whpginitsystem7 /home/gpadmin/hostfile_segments_whpginitsystem
+COPY --chown=gpadmin:gpadmin hostfile_ssh_whpginitsystem7 /home/gpadmin/hostfile_ssh_whpginitsystem
 COPY --chown=gpadmin:gpadmin whpginitsystem_multinode7 /home/gpadmin/whpginitsystem_multinode
 # the chmod option needs buildx
 COPY --chown=gpadmin:gpadmin --chmod=0750 warehousepg_init7.sh /home/gpadmin/warehousepg_init.sh

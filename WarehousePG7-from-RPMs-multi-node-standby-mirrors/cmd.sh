@@ -395,9 +395,9 @@ then
     then
         # reload the database, to apply pg_hba.conf changes
         echo "Reloading WarehousePG Database ..."
-        #gpstop -M fast -a -d ${COORDINATOR_DATA_DIR}/whpgmne-1/
-        #gpstart -a -d ${COORDINATOR_DATA_DIR}/whpgmne-1/
-        gpstop -u -d ${COORDINATOR_DATA_DIR}/whpgmne-1/
+        #( source ${WHPG_HOME}/greenplum_path.sh && gpstop -M fast -a -d ${COORDINATOR_DATA_DIR}/whpgmne-1/ )
+        #( source ${WHPG_HOME}/greenplum_path.sh && gpstart -a -d ${COORDINATOR_DATA_DIR}/whpgmne-1/ )
+        ( source ${WHPG_HOME}/greenplum_path.sh && gpstop -u -d ${COORDINATOR_DATA_DIR}/whpgmne-1/ )
         echo "Reloading WarehousePG Database ... done"
     fi
 
