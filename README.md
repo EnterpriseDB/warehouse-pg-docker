@@ -10,13 +10,15 @@ While the data directories for all segment databases are mapped to the Docker ho
 
 ## Table of Contents
 
-- `WarehousePG6-from-RPMs-single-node`: WarehousePG v6, single node, installed from RPMs
-- `WarehousePG6-from-source`: WarehousePG v6, single node, built from source code
-- `WarehousePG7-from-RPMs-multi-node`: WarehousePG v7, coordinator + 2 segment hosts, installed from RPMs
-- `WarehousePG7-from-RPMs-multi-node-standby-mirrors`: WarehousePG v7, coordinator + 2 segment hosts, standby coordinator and mirrors enabled, installed from RPMs
-- `WarehousePG7-from-RPMs-single-node`: WarehousePG v7, single node, installed from RPMs
-- `WarehousePG7-from-RPMs-single-node-not-installed`: WarehousePG v7, single node, installed from RPMs, database not configured (for trying out install options)
-- `WarehousePG7-from-source`: WarehousePG v7, single node, built from source code
+- `WarehousePG6-from-RPMs-RH7-single-node`: WarehousePG v6, single node, installed from RPMs
+- `WarehousePG6-from-source-RH7-single-node`: WarehousePG v6, single node, built from source code
+- `WarehousePG7-from-RPMs-RH9-multi-node`: WarehousePG v7, coordinator + 2 segment hosts, installed from RPMs
+- `WarehousePG7-from-RPMs-RH9-multi-node-standby-mirrors`: WarehousePG v7, coordinator + 2 segment hosts, standby coordinator and mirrors enabled, installed from RPMs
+- `WarehousePG7-from-RPMs-RH9-single-node`: WarehousePG v7, single node, installed from RPMs
+- `WarehousePG7-from-RPMs-RH9-single-node-not-installed`: WarehousePG v7, single node, installed from RPMs, database not configured (for trying out install options)
+- `WarehousePG7-from-source-RH9-single-node`: WarehousePG v7, single node, built from source code
+
+The `RH7` labs are using [CentOS](https://en.wikipedia.org/wiki/CentOS) 7, the `RH9` labs are using [Rocky Linux](https://en.wikipedia.org/wiki/Rocky_Linux) 9.
 
 ## Installation
 
@@ -38,7 +40,7 @@ Create the file "~/.edb-repository", add one of: "dev", "staging_gpsupp", "gpsup
 Check your Docker settings, allow enough disk space, RAM and CPU for Docker.
 For building all images consider 50-60 GB disk space.
 
-Note: the containers build from source do not need a token.
+Note: the containers build from source do not need an EDB token.
 
 ## Single Node Setup
 
@@ -46,11 +48,11 @@ A single node setup includes the coordinator and multiple segment databases (2 i
 
 The following setups are single node:
 
-- `WarehousePG6-from-RPMs-single-node`
-- `WarehousePG6-from-source`
-- `WarehousePG7-from-RPMs-single-node`
-- `WarehousePG7-from-RPMs-single-node-not-installed`
-- `WarehousePG7-from-source`
+- `WarehousePG6-from-RPMs-RH7-single-node`
+- `WarehousePG6-from-source-RH7-single-node`
+- `WarehousePG7-from-RPMs-RH9-single-node`
+- `WarehousePG7-from-RPMs-RH9-single-node-not-installed`
+- `WarehousePG7-from-source-RH9-single-node`
 
 ## Multi Node Setup
 
@@ -58,15 +60,15 @@ A multi node setup includes multiple machines or containers. One system is used 
 
 The following setups are multi-node:
 
-- `WarehousePG7-from-RPMs-multi-node` (no standby coordinator, no mirror segments)
-- `WarehousePG7-from-RPMs-multi-node-standby-mirrors` (includes standby coordinator, includes mirror segments)
+- `WarehousePG7-from-RPMs-RH9-multi-node` (no standby coordinator, no mirror segments)
+- `WarehousePG7-from-RPMs-RH9-multi-node-standby-mirrors` (includes standby coordinator, includes mirror segments)
 
 ## Interactive Training
 
 For detailed instructions on setting up WarehousePG from scratch, please refer to the [training](training.md) document.
 
-The `WarehousePG7-from-RPMs-single-node-not-installed` lab can be used here, this container has the RPM packages pre-installed, but WarehousePG is not configured. Necessary files are available in `/home/gpadmin` in the container (use `make access` to drop into a shell once the container is started).
+The `WarehousePG7-from-RPMs-RH9-single-node-not-installed` lab can be used here, this container has the RPM packages pre-installed, but WarehousePG is not configured. Necessary files are available in `/home/gpadmin` in the container (use `make access` to drop into a shell once the container is started).
 
 ## Build WarehousePG From Source
 
-The containers `WarehousePG6-from-source` and `WarehousePG7-from-source` build WarehousePG from source. Refer to the `Dockerfile` in each directory for detailed instructions how to build the database from source.
+The containers `WarehousePG6-from-source-RH7-single-node` and `WarehousePG7-from-source-RH9-single-node` build WarehousePG from source. Refer to the `Dockerfile` in each directory for detailed instructions how to build the database from source.
