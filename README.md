@@ -2,6 +2,12 @@
 
 This repository provides Docker configurations for setting up WarehousePG in both single-node and multi-node configurations.
 
+## Container Restart
+
+Currently none of the Docker labs will survive a container restart. This setup is not meant for production use.
+
+While the data directories for all segment databases are mapped to the Docker host, this is meant for inspecting the directories, not to support a container restart.
+
 ## Table of Contents
 
 - `WarehousePG6-from-RPMs-single-node`: WarehousePG v6, single node, installed from RPMs
