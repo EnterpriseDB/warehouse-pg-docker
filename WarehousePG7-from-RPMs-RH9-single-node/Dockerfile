@@ -176,8 +176,9 @@ EXPOSE 30000-30010/tcp
 
 
 # copy installation over from the build stage image
-RUN rm -rf /usr/local/*
+RUN rm -rf /usr/local/* /usr/edb/*
 COPY --from=build-stage /usr/local /usr/local
+COPY --from=build-stage /usr/edb /usr/edb
 
 
 # switch to gpadmin user, do not build image as root

@@ -58,6 +58,7 @@ echo "Starting sshd ... done"
 
 # directories already created in Dockerfile
 # do it again in case this is a Docker mounted directory
+# Note: do not create the directory for the standby - gpinitsystem expects to create the directory
 sudo mkdir -p ${COORDINATOR_DATA_DIR} $SEGMENT1_DATA_DIR $SEGMENT2_DATA_DIR $MIRROR1_DATA_DIR $MIRROR2_DATA_DIR
 sudo chown -R ${WHPG_USER}:${WHPG_USER} ${DATA_DIR}
 
