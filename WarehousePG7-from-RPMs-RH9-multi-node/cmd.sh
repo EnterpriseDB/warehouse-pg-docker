@@ -49,7 +49,7 @@ sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ss
 sudo mkdir -p /run/sshd
 
 echo "Starting sshd ..."
-sudo /usr/sbin/sshd -o "ListenAddress=0.0.0.0"
+sudo /usr/sbin/sshd -o "PerSourcePenalties=no" -o "ListenAddress=0.0.0.0"
 echo "Starting sshd ... done"
 
 # directories already created in Dockerfile

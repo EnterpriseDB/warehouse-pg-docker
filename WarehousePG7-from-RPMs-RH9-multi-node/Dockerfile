@@ -96,6 +96,9 @@ RUN dnf install -y warehouse-pg-7
 # installation goes into /usr/local/bin
 RUN dnf install -y whpg-backup
 
+# just for AIDB on WHPG tests
+RUN dnf install -y edb-whpg7-pgvector
+
 
 # switch to gpadmin user, do not build as root
 USER gpadmin
@@ -152,6 +155,30 @@ COPY rpm-packages-image-step.txt /root/rpm-packages-image-step.txt
 RUN dnf install -y $(cat /root/rpm-packages-image-step.txt)
 
 RUN dnf install -y --enablerepo=crb libyaml libyaml-devel libuv-devel perl-IPC-Run
+
+# Intel oneAPI MKL — runtime dependency of AIDB.
+# aidb.so has unresolved symbols like hgemm_ (half-precision GEMM) that must
+# be satisfied by libmkl at extension load time. Also copy libiomp5 next to
+# it so the OpenMP runtime is on the default library search path.
+# Mirrors aidb/.github/workflows/foundation-packaging.yml (dnf branch).
+# Register /opt/intel/.../lib with ldconfig too — otherwise postgres's dlopen
+# won't find libmkl_rt.so.3 (it lives outside the default search path).
+RUN printf '%s\n' \
+        '[oneAPI]' \
+        'name=Intel oneAPI repository' \
+        'baseurl=https://yum.repos.intel.com/oneapi' \
+        'enabled=1' \
+        'gpgcheck=1' \
+        'repo_gpgcheck=1' \
+        'gpgkey=https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB' \
+        > /etc/yum.repos.d/oneAPI.repo \
+ && dnf install -y intel-oneapi-mkl-devel \
+ && cp /opt/intel/oneapi/compiler/latest/lib/libiomp5.so /usr/lib64/ \
+ && printf '%s\n' \
+        '/opt/intel/oneapi/mkl/latest/lib' \
+        '/opt/intel/oneapi/compiler/latest/lib' \
+        > /etc/ld.so.conf.d/oneapi.conf \
+ && ldconfig
 
 RUN dnf clean all
 
