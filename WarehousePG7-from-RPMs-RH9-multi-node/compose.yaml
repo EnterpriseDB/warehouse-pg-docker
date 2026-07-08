@@ -1,5 +1,24 @@
 services:
+  # Workaround for a Docker Desktop for Mac (VirtioFS) bug: freshly-created
+  # host subdirectories aren't visible to the daemon's bind-mount code until
+  # a container has mounted them once. This service touches every DB service's
+  # bind-mount source on startup, exits immediately, and gates the rest of
+  # the topology via `depends_on: condition: service_completed_successfully`.
+  filesharewarmer:
+    image: alpine
+    platform: linux/amd64
+    command: /bin/true
+    volumes:
+      - ./data/coordinator/data:/x/coordinator
+      - ./data/standby/data:/x/standby
+      - ./data/seg1/data:/x/seg1
+      - ./data/seg2/data:/x/seg2
+      - ./data/gpfdist/data:/x/gpfdist
+
   coordinator:
+    depends_on:
+      filesharewarmer:
+        condition: service_completed_successfully
     build:
       context: .
       dockerfile: Dockerfile
@@ -32,6 +51,9 @@ services:
       whpg-sme-network:
 
   standby:
+    depends_on:
+      filesharewarmer:
+        condition: service_completed_successfully
     build:
       context: .
       dockerfile: Dockerfile
@@ -52,7 +74,6 @@ services:
     ports:
       - "6433:5432"
     volumes:
-      - ./data:/whpgdata
       - ./data/standby/data:/whpgdata
 #      - ./data/standby/gpadmin_ssh:/home/gpadmin/.ssh
 #      - ./data/standby/root_ssh:/root/.ssh
@@ -65,6 +86,9 @@ services:
       whpg-sme-network:
 
   seg1:
+    depends_on:
+      filesharewarmer:
+        condition: service_completed_successfully
     build:
       context: .
       dockerfile: Dockerfile
@@ -83,7 +107,6 @@ services:
       - edbtoken_secret
       - edbrepository_secret
     volumes:
-      - ./data:/whpgdata
       - ./data/seg1/data:/whpgdata
 #      - ./data/seg1/gpadmin_ssh:/home/gpadmin/.ssh
 #      - ./data/seg1/root_ssh:/root/.ssh
@@ -96,6 +119,9 @@ services:
       whpg-sme-network:
 
   seg2:
+    depends_on:
+      filesharewarmer:
+        condition: service_completed_successfully
     build:
       context: .
       dockerfile: Dockerfile
@@ -114,7 +140,6 @@ services:
       - edbtoken_secret
       - edbrepository_secret
     volumes:
-      - ./data:/whpgdata
       - ./data/seg2/data:/whpgdata
 #      - ./data/seg2/gpadmin_ssh:/home/gpadmin/.ssh
 #      - ./data/seg2/root_ssh:/root/.ssh
@@ -127,6 +152,9 @@ services:
       whpg-sme-network:
 
   gpfdist:
+    depends_on:
+      filesharewarmer:
+        condition: service_completed_successfully
     build:
       context: .
       dockerfile: Dockerfile
@@ -145,7 +173,6 @@ services:
       - edbtoken_secret
       - edbrepository_secret
     volumes:
-      - ./data:/whpgdata
       - ./data/gpfdist/data:/whpgdata
 #      - ./data/gpfdist/gpadmin_ssh:/home/gpadmin/.ssh
 #      - ./data/gpfdist/root_ssh:/root/.ssh

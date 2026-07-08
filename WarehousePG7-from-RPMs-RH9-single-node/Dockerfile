@@ -96,6 +96,8 @@ RUN dnf install -y warehouse-pg-7
 # installation goes into /usr/local/bin
 RUN dnf install -y whpg-backup
 
+# just for AIDB on WHPG tests
+RUN dnf install -y edb-whpg7-pgvector
 
 # switch to gpadmin user, do not build as root
 USER gpadmin

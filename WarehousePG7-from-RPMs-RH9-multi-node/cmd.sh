@@ -70,7 +70,7 @@ if sudo sshd -T 2>/dev/null | grep -qi "persourcepenalties"; then
 fi
 
 echo "Starting sshd ..."
-sudo /usr/sbin/sshd -o "ListenAddress=0.0.0.0"
+sudo /usr/sbin/sshd -o "PerSourcePenalties=no" -o "ListenAddress=0.0.0.0"
 echo "Starting sshd ... done"
 
 # directories already created in Dockerfile
