@@ -63,6 +63,12 @@ The following setups are multi-node:
 - `WarehousePG7-from-RPMs-RH9-multi-node` (no standby coordinator, no mirror segments)
 - `WarehousePG7-from-RPMs-RH9-multi-node-standby-mirrors` (includes standby coordinator, includes mirror segments)
 
+## Docker Desktop on macOS
+
+On macOS, Docker Desktop can fail to correctly initialize bind-mounted data directories the first time a `linux/amd64` container (the labs in this repository are built for `linux/amd64`, since WarehousePG does not provide `arm64` packages) writes to them. This is a long-standing Docker Desktop for Mac issue, tracked upstream at [docker/for-mac#69](https://github.com/docker/for-mac/issues/69).
+
+To work around this, the `Makefile` in each lab creates the `data/` directories and then, only on macOS with Docker Desktop, runs a throwaway `alpine` container against each of them (`docker run --rm --platform=linux/amd64 -v ... alpine true`) before starting the actual lab containers. This forces Docker Desktop to initialize the bind mount correctly ahead of time. This step is skipped on Linux and on other Docker setups, where it is not needed.
+
 ## Interactive Training
 
 For detailed instructions on setting up WarehousePG from scratch, please refer to the [training](training.md) document.
