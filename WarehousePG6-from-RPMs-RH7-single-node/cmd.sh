@@ -48,6 +48,27 @@ echo "Generating sshd host keys ... done"
 sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
 sudo mkdir -p /run/sshd
 
+# test if the running sshd binary supports the PerSourcePenalties option
+if sudo sshd -T 2>/dev/null | grep -qi "persourcepenalties"; then
+    # check if it's already configured to avoid duplicate lines
+    if sudo grep -qi "^[[:space:]]*PerSourcePenalties" "/etc/ssh/sshd_config"; then
+        echo "PerSourcePenalties is already present in /etc/ssh/sshd_config"
+    else
+        echo "Adding PerSourcePenalties to /etc/ssh/sshd_config..."
+        
+        # append the disabling line
+        echo -e "\n# Turn off automatic pre-auth source IP penalties\nPerSourcePenalties no" | sudo tee -a "/etc/ssh/sshd_config" > /dev/null
+
+        # validate the configuration before applying it
+        if sudo sshd -t; then
+            echo "sshd configuration syntax is valid"
+        else
+            echo "sshd configuration validation failed! Please check /etc/ssh/sshd_config for errors!"
+            exit 1
+        fi
+    fi
+fi
+
 echo "Starting sshd ..."
 sudo /usr/sbin/sshd -o "ListenAddress=0.0.0.0"
 echo "Starting sshd ... done"
