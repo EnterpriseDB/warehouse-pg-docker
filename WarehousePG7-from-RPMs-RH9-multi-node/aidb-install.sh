@@ -42,14 +42,60 @@ for c in "${CONTAINERS[@]}"; do
     done
 done
 
+# Register AIDB in shared_preload_libraries cluster-wide and restart. Needed
+# for AIDB's background workers, and the restart also makes postgres pick up
+# the freshly-copied aidb.so (any earlier version would still be mapped into
+# the running postmaster's memory).
+COORDINATOR=warehousepg7-from-rpms-rh9-multi-node-coordinator-1
+echo ""
+echo "==> Setting shared_preload_libraries='aidb' and restarting the cluster"
+
+# pg_isready needs LD_LIBRARY_PATH from greenplum_path.sh or it can't find
+# its own libpq.so.5. Source it explicitly, otherwise this check gives a
+# false "not reachable" result on a perfectly healthy cluster.
+if ! docker exec -u gpadmin "$COORDINATOR" bash -lc '
+    source /usr/local/greenplum-db/greenplum_path.sh
+    pg_isready -h 127.0.0.1 -p 5432 -U gpadmin -d postgres -q
+' >/dev/null 2>&1; then
+    cat >&2 <<EOF
+
+WARN: coordinator DB is not reachable. Skipping gpconfig + restart.
+      Once the cluster is up, run manually:
+        docker exec -u gpadmin -it $COORDINATOR bash -lc \\
+          "source /usr/local/greenplum-db/greenplum_path.sh && \\
+           gpconfig -c shared_preload_libraries -v \"'aidb'\" && \\
+           gpstop -a -M fast && gpstart -a"
+EOF
+    exit 0
+fi
+
+# Pass the value BARE (no quotes) — gpconfig wraps the value in single
+# quotes itself when it writes postgresql.conf. Passing "'aidb'" here
+# ended up writing shared_preload_libraries='''aidb''', which postgres
+# parses as a string literally containing single quotes, and refuses
+# to start with "could not access file ''aidb''".
+docker exec -u gpadmin "$COORDINATOR" bash -lc '
+    set -e
+    source /usr/local/greenplum-db/greenplum_path.sh
+    gpconfig -c shared_preload_libraries -v aidb
+    # AIDB spawns 2 bgworkers per non-template DB plus one per pipeline,
+    # on top of what WHPG itself uses (FTS probe, WAL sender/receiver,
+    # autovacuum, GP-internal workers). WHPG default (13) runs out fast.
+    gpconfig -c max_worker_processes -v 32
+    echo ""
+    echo ">>> Restarting cluster"
+    gpstop -a -M fast
+    gpstart -a
+    echo ""
+    gpconfig -s shared_preload_libraries
+    gpconfig -s max_worker_processes
+'
+
 cat <<EOF
 
-Copied AIDB artifacts into all running WHPG DB containers.
-
-Next steps (inside coordinator):
-  # if AIDB needs to be preloaded, add to postgresql.conf and restart:
-  #   shared_preload_libraries = 'aidb'         # add 'vchord' too if you built with it
-  # then, once the cluster is up:
-  psql -U gpadmin -d whpgtest -c "CREATE EXTENSION vector;"
-  psql -U gpadmin -d whpgtest -c "CREATE EXTENSION aidb CASCADE;"
+AIDB installed and enabled in shared_preload_libraries.
+To create the extension:
+  make psql-coordinator
+  # then in psql:
+  CREATE EXTENSION aidb CASCADE;
 EOF
