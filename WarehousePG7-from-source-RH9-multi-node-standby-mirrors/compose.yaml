@@ -1,0 +1,132 @@
+services:
+  coordinator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: whpg7-source-rh9-multinode-standby-mirrors:latest
+    ulimits:
+      nofile:
+        soft: 524288
+        hard: 524288
+      nproc: 131072
+    deploy:
+      resources:
+        limits:
+          cpus: 4.0
+          memory: 4gb
+        reservations:
+          cpus: 1.0
+          memory: 1gb
+    ports:
+      - "6432:5432"
+    volumes:
+      - ./data/coordinator/data:/whpgdata
+    environment:
+      - container=docker
+    platform: linux/amd64
+    hostname: coordinator
+    networks:
+      whpg-sme-network:
+
+  standby:
+    image: whpg7-source-rh9-multinode-standby-mirrors:latest
+    ulimits:
+      nofile:
+        soft: 524288
+        hard: 524288
+      nproc: 131072
+    deploy:
+      resources:
+        limits:
+          cpus: 4.0
+          memory: 4gb
+        reservations:
+          cpus: 1.0
+          memory: 1gb
+    ports:
+      - "6433:5432"
+    volumes:
+      - ./data/standby/data:/whpgdata
+    environment:
+      - container=docker
+    platform: linux/amd64
+    hostname: standby
+    networks:
+      whpg-sme-network:
+
+  seg1:
+    image: whpg7-source-rh9-multinode-standby-mirrors:latest
+    ulimits:
+      nofile:
+        soft: 524288
+        hard: 524288
+      nproc: 131072
+    deploy:
+      resources:
+        limits:
+          cpus: 4.0
+          memory: 4gb
+        reservations:
+          cpus: 2.0
+          memory: 2gb
+    volumes:
+      - ./data/seg1/data:/whpgdata
+    environment:
+      - container=docker
+    platform: linux/amd64
+    hostname: seg1
+    networks:
+      whpg-sme-network:
+
+  seg2:
+    image: whpg7-source-rh9-multinode-standby-mirrors:latest
+    ulimits:
+      nofile:
+        soft: 524288
+        hard: 524288
+      nproc: 131072
+    deploy:
+      resources:
+        limits:
+          cpus: 4.0
+          memory: 4gb
+        reservations:
+          cpus: 2.0
+          memory: 2gb
+    volumes:
+      - ./data/seg2/data:/whpgdata
+    environment:
+      - container=docker
+    platform: linux/amd64
+    hostname: seg2
+    networks:
+      whpg-sme-network:
+
+  gpfdist:
+    image: whpg7-source-rh9-multinode-standby-mirrors:latest
+    ulimits:
+      nofile:
+        soft: 524288
+        hard: 524288
+      nproc: 131072
+    deploy:
+      resources:
+        limits:
+          cpus: 2.0
+          memory: 1gb
+        reservations:
+          cpus: 1.0
+          memory: 1gb
+    volumes:
+      - ./data/gpfdist/data:/whpgdata
+    environment:
+      - container=docker
+    platform: linux/amd64
+    hostname: gpfdist
+    networks:
+      whpg-sme-network:
+
+
+networks:
+  whpg-sme-network:
+    driver: bridge

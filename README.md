@@ -14,6 +14,7 @@ While the data directories for all segment databases are mapped to the Docker ho
 - `WarehousePG6-from-source-RH7-single-node`: WarehousePG v6, single node, built from source code
 - `WarehousePG7-from-RPMs-RH9-multi-node`: WarehousePG v7, coordinator + 2 segment hosts, installed from RPMs
 - `WarehousePG7-from-RPMs-RH9-multi-node-standby-mirrors`: WarehousePG v7, coordinator + 2 segment hosts, standby coordinator and mirrors enabled, installed from RPMs
+- `WarehousePG7-from-source-RH9-multi-node-standby-mirrors`: WarehousePG v7, coordinator + 2 segment hosts, standby coordinator and mirrors enabled, built from source and packaged as local RPMs
 - `WarehousePG7-from-RPMs-RH9-single-node`: WarehousePG v7, single node, installed from RPMs
 - `WarehousePG7-from-RPMs-RH9-single-node-not-installed`: WarehousePG v7, single node, installed from RPMs, database not configured (for trying out install options)
 - `WarehousePG7-from-source-RH9-single-node`: WarehousePG v7, single node, built from source code
@@ -62,6 +63,7 @@ The following setups are multi-node:
 
 - `WarehousePG7-from-RPMs-RH9-multi-node` (no standby coordinator, no mirror segments)
 - `WarehousePG7-from-RPMs-RH9-multi-node-standby-mirrors` (includes standby coordinator, includes mirror segments)
+- `WarehousePG7-from-source-RH9-multi-node-standby-mirrors` (includes standby coordinator, includes mirror segments, builds WarehousePG from source and installs the locally built RPMs in a shared image)
 
 ## Interactive Training
 
@@ -71,4 +73,4 @@ The `WarehousePG7-from-RPMs-RH9-single-node-not-installed` lab can be used here,
 
 ## Build WarehousePG From Source
 
-The containers `WarehousePG6-from-source-RH7-single-node` and `WarehousePG7-from-source-RH9-single-node` build WarehousePG from source. Refer to the `Dockerfile` in each directory for detailed instructions how to build the database from source.
+The containers `WarehousePG6-from-source-RH7-single-node`, `WarehousePG7-from-source-RH9-single-node`, and `WarehousePG7-from-source-RH9-multi-node-standby-mirrors` build WarehousePG from source. Refer to the `Dockerfile` in each directory for detailed instructions how to build the database from source.
