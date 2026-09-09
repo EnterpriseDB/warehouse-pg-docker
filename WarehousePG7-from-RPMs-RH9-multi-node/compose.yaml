@@ -52,7 +52,6 @@ services:
     ports:
       - "6433:5432"
     volumes:
-      - ./data:/whpgdata
       - ./data/standby/data:/whpgdata
 #      - ./data/standby/gpadmin_ssh:/home/gpadmin/.ssh
 #      - ./data/standby/root_ssh:/root/.ssh
@@ -83,7 +82,6 @@ services:
       - edbtoken_secret
       - edbrepository_secret
     volumes:
-      - ./data:/whpgdata
       - ./data/seg1/data:/whpgdata
 #      - ./data/seg1/gpadmin_ssh:/home/gpadmin/.ssh
 #      - ./data/seg1/root_ssh:/root/.ssh
@@ -114,7 +112,6 @@ services:
       - edbtoken_secret
       - edbrepository_secret
     volumes:
-      - ./data:/whpgdata
       - ./data/seg2/data:/whpgdata
 #      - ./data/seg2/gpadmin_ssh:/home/gpadmin/.ssh
 #      - ./data/seg2/root_ssh:/root/.ssh
@@ -145,7 +142,6 @@ services:
       - edbtoken_secret
       - edbrepository_secret
     volumes:
-      - ./data:/whpgdata
       - ./data/gpfdist/data:/whpgdata
 #      - ./data/gpfdist/gpadmin_ssh:/home/gpadmin/.ssh
 #      - ./data/gpfdist/root_ssh:/root/.ssh

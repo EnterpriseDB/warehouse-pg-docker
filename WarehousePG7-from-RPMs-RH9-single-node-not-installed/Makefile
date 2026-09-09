@@ -12,6 +12,7 @@ include ../token.mk
 
 
 CURRENT_UID := $(shell id -u)
+MAC_DOCKER_DESKTOP := $(shell if [ "$$(uname)" = "Darwin" ] && docker info --format '{{.OperatingSystem}}' 2>/dev/null | grep -q "Docker Desktop"; then echo 1; fi)
 
 
 all:
@@ -28,7 +29,16 @@ all:
 	@echo "clean:    Remove all artifacts"
 
 build:
+	@if [ -n "$(MAC_DOCKER_DESKTOP)" ]; then \
+		docker pull --platform=linux/amd64 alpine; \
+	fi
 	mkdir -p $(shell pwd)/data
+	mkdir -p $(shell pwd)/usr_local
+	@if [ -n "$(MAC_DOCKER_DESKTOP)" ]; then \
+		for i in data usr_local; do \
+			docker run --rm --platform=linux/amd64 -v "$$(pwd)/$$i":/x alpine true; \
+		done; \
+	fi
 	DOCKER_BUILDKIT=1 docker compose up --build --no-start --remove-orphans
 	docker image prune -f
 	docker buildx prune -f
@@ -36,6 +46,11 @@ build:
 run:	checklabsrunning
 	mkdir -p $(shell pwd)/data
 	mkdir -p $(shell pwd)/usr_local
+	@if [ -n "$(MAC_DOCKER_DESKTOP)" ]; then \
+		for i in data usr_local; do \
+			docker run --rm --platform=linux/amd64 -v "$$(pwd)/$$i":/x alpine true; \
+		done; \
+	fi
 	DOCKER_BUILDKIT=1 docker compose up --detach
 
 status:

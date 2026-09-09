@@ -9,6 +9,7 @@ TCP_PORT="6432"
 
 
 CURRENT_UID := $(shell id -u)
+MAC_DOCKER_DESKTOP := $(shell if [ "$$(uname)" = "Darwin" ] && docker info --format '{{.OperatingSystem}}' 2>/dev/null | grep -q "Docker Desktop"; then echo 1; fi)
 
 
 all:
@@ -25,13 +26,22 @@ all:
 	@echo "clean:    Remove all artifacts"
 
 build:
+	@if [ -n "$(MAC_DOCKER_DESKTOP)" ]; then \
+		docker pull --platform=linux/amd64 alpine; \
+	fi
 	mkdir -p $(shell pwd)/data
+	@if [ -n "$(MAC_DOCKER_DESKTOP)" ]; then \
+		docker run --rm --platform=linux/amd64 -v "$$(pwd)/data":/x alpine true; \
+	fi
 	DOCKER_BUILDKIT=1 docker compose up --build --no-start --remove-orphans
 	docker image prune -f
 	docker buildx prune -f
 
 run:	checklabsrunning
 	mkdir -p $(shell pwd)/data
+	@if [ -n "$(MAC_DOCKER_DESKTOP)" ]; then \
+		docker run --rm --platform=linux/amd64 -v "$$(pwd)/data":/x alpine true; \
+	fi
 	DOCKER_BUILDKIT=1 docker compose up --detach
 
 status:

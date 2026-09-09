@@ -10,6 +10,7 @@ include ../token.mk
 
 
 CURRENT_UID := $(shell id -u)
+MAC_DOCKER_DESKTOP := $(shell if [ "$$(uname)" = "Darwin" ] && docker info --format '{{.OperatingSystem}}' 2>/dev/null | grep -q "Docker Desktop"; then echo 1; fi)
 
 
 all:
@@ -26,9 +27,17 @@ all:
 	@echo "clean:    Remove all artifacts"
 
 build:
+	@if [ -n "$(MAC_DOCKER_DESKTOP)" ]; then \
+		docker pull --platform=linux/amd64 alpine; \
+	fi
 	@# Docker may create the data directories already - as root
 	mkdir -p $(shell pwd)/data
 	@for i in coordinator standby seg1 seg2 gpfdist; do mkdir -p data/$$i data/$$i/data data/$$i/gpadmin_ssh data/$$i/root_ssh data/$$i/etc_ssh; done
+	@if [ -n "$(MAC_DOCKER_DESKTOP)" ]; then \
+		for i in coordinator standby seg1 seg2 gpfdist; do \
+			docker run --rm --platform=linux/amd64 -v "$$(pwd)/data/$$i/data":/x alpine true; \
+		done; \
+	fi
 	DOCKER_BUILDKIT=1 docker compose up --build --no-start --remove-orphans
 	docker image prune -f
 	docker buildx prune -f
@@ -37,6 +46,11 @@ run:	checklabsrunning
 	@mkdir -p data
 	@sudo chown `id -un`:`id -gn` data data/* ; true
 	@for i in coordinator standby seg1 seg2 gpfdist; do mkdir -p data/$$i data/$$i/data data/$$i/gpadmin_ssh data/$$i/root_ssh data/$$i/etc_ssh; done
+	@if [ -n "$(MAC_DOCKER_DESKTOP)" ]; then \
+		for i in coordinator standby seg1 seg2 gpfdist; do \
+			docker run --rm --platform=linux/amd64 -v "$$(pwd)/data/$$i/data":/x alpine true; \
+		done; \
+	fi
 	DOCKER_BUILDKIT=1 docker compose up --detach
 
 status:
