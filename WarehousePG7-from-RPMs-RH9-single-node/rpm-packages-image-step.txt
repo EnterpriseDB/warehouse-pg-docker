@@ -25,7 +25,6 @@ cmake cmake3
 gcc gcc-c++
 make
 diffutils
-libevent-devel
 curl-devel libcurl-devel
 boost-devel 
 thrift-devel
