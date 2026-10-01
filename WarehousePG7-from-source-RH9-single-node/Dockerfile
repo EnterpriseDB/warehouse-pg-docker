@@ -74,6 +74,8 @@ ENV PATH=$WHPGHOME/bin:$PATH
 # install required packages for building WarehousePG
 #RUN localectl set-locale LANG=en_US.UTF-8
 RUN dnf update -y
+# install glibc-devel early on, to fix a build error on newer RH versions later on
+RUN dnf install -y glibc-devel
 RUN dnf groupinstall -y "Development Tools"
 RUN dnf install -y epel-release
 RUN dnf update -y
