@@ -16,6 +16,7 @@ docker-running:
 build-everything:	docker-running
 	cd WarehousePG6-from-source-RH7-single-node/ && make MAKELEVEL=0 build
 	cd WarehousePG7-from-source-RH9-single-node/ && make MAKELEVEL=0 build
+	cd WarehousePG7-from-source-RH9-multi-node-standby-mirrors/ && make MAKELEVEL=0 build
 	cd WarehousePG6-from-RPMs-RH7-single-node/ && make MAKELEVEL=0 build
 	cd WarehousePG7-from-RPMs-RH9-single-node/ && make MAKELEVEL=0 build
 	cd WarehousePG7-from-RPMs-RH9-multi-node/ && make MAKELEVEL=0 build
@@ -25,6 +26,7 @@ build-everything:	docker-running
 stop-everything:	docker-running
 	cd WarehousePG6-from-source-RH7-single-node/ && make MAKELEVEL=0 stop
 	cd WarehousePG7-from-source-RH9-single-node/ && make MAKELEVEL=0 stop
+	cd WarehousePG7-from-source-RH9-multi-node-standby-mirrors/ && make MAKELEVEL=0 stop
 	cd WarehousePG6-from-RPMs-RH7-single-node/ && make MAKELEVEL=0 stop
 	cd WarehousePG7-from-RPMs-RH9-single-node/ && make MAKELEVEL=0 stop
 	cd WarehousePG7-from-RPMs-RH9-multi-node/ && make MAKELEVEL=0 stop
@@ -34,6 +36,7 @@ stop-everything:	docker-running
 clean-everything:	docker-running
 	cd WarehousePG6-from-source-RH7-single-node/ && make MAKELEVEL=0 clean
 	cd WarehousePG7-from-source-RH9-single-node/ && make MAKELEVEL=0 clean
+	cd WarehousePG7-from-source-RH9-multi-node-standby-mirrors/ && make MAKELEVEL=0 clean
 	cd WarehousePG6-from-RPMs-RH7-single-node/ && make MAKELEVEL=0 clean
 	cd WarehousePG7-from-RPMs-RH9-single-node/ && make MAKELEVEL=0 clean
 	cd WarehousePG7-from-RPMs-RH9-multi-node/ && make MAKELEVEL=0 clean
