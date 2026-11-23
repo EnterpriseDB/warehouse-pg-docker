@@ -393,7 +393,7 @@ then
         echo "Running gpinitsystem ... done"
     else
         echo "Starting WarehousePG ..."
-        ( source ${WHPG_HOME}/greenplum_path.sh && gpstart -a -d ${COORDINATOR_DATA_DIR}/whpgdr-1/ )
+        ( source ${WHPG_HOME}/greenplum_path.sh && gpstart -a -d ${COORDINATOR_DATA_DIR}/whpgmne-1/ )
         echo "Starting WarehousePG ... done"
     fi
 
